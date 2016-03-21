@@ -72,8 +72,7 @@ namespace GraphicsLab21
             float endU = 1.0f;
             float endV = 1.0f;
             float c = 0.2f;
-            float x1 = 0, y1 = 0, z1 = 0;
-            float x2 = 0, y2 = 0, z2 = 0;
+            float x = 0, y = 0, z = 0;
             float b = 0.5f, a = 1.0f, p = 3.0f;
 
             float[] light_specular_color = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -81,13 +80,16 @@ namespace GraphicsLab21
             float[] light_diffuse_color = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] light_position = {100.0f, 2.0f, -100.0f, 0.0f};
 
+            float[] positional_light = { 10.0f, 100.0f, -20.0f };
+
             Vector vecColorM = new Vector(1.0f, 0.0f, 0.0f); //blue
             Vector vecColorL = new Vector(1.0f, 1.0f, 1.0f); //white
-            Vector vecLight = new Vector(50.0f, 1.0f, 0.0f);
+            //Vector vecLight = new Vector(50.0f, 1.0f, 0.0f);
             Vector vecViewer = new Vector(-20.0f, 4.0f, -10.0f);
             Vector normal;
             Vector light;
             Vector vecReflected;
+            Vector vecLight = new Vector(0, 0, 0);
 
             float shining = 1.0f;
         
@@ -119,27 +121,32 @@ namespace GraphicsLab21
                 float f = 0;
                 for (v = 5.0f; v <= 7.0f; v += step)
                 {
-                    x2 = (v * (float)Math.Cos(u));
-                    y2 = (v * (float)Math.Sin(u));
-                    z2 = b * u + a * (float)Math.Sin(p * u);
+                    x = (v * (float)Math.Cos(u));
+                    y = (v * (float)Math.Sin(u));
+                    z = b * u + a * (float)Math.Sin(p * u);
                     normal = VectorOperations.GetNormal(u, v, deltaU, deltaV, a, b, p);
 
                     //gl.Normal(normal.X, normal.Y, normal.Z);
                     vecReflected = calculateReflectedVec(vecLight, normal);
+                    vecLight.X = (x - positional_light[0]); 
+                    vecLight.Y = (y - positional_light[1]);
+                    vecLight.Z = (z - positional_light[2]);
                     light = calculateLightCos(vecColorM, vecColorL, vecLight, normal, vecReflected, vecViewer, shining);
                     gl.Color(light.X, light.Y, light.Z);
-                    gl.Vertex(x2, y2, z2);
-
+                    gl.Vertex(x, y, z);
                    
-                    x2 = (v * (float)Math.Cos(u + step));
-                    y2 = (v * (float)Math.Sin(u + step));
-                    z2 = b * (u + step) + a * (float)Math.Sin(p * (u + step));
+                    x = (v * (float)Math.Cos(u + step));
+                    y = (v * (float)Math.Sin(u + step));
+                    z = b * (u + step) + a * (float)Math.Sin(p * (u + step));
                     normal = VectorOperations.GetNormal((u + step), v, deltaU, deltaV, a, b, p);
                     //gl.Normal(normal.X, normal.Y, normal.Z);
                     vecReflected = calculateReflectedVec(vecLight, normal);
+                    vecLight.X = (x - positional_light[0]);
+                    vecLight.Y = (y - positional_light[1]);
+                    vecLight.Z = (z - positional_light[2]);
                     light = calculateLightCos(vecColorM, vecColorL, vecLight, normal, vecReflected, vecViewer, shining);
                     gl.Color(light.X, light.Y, light.Z);
-                    gl.Vertex(x2, y2, z2);
+                    gl.Vertex(x, y, z);
                    
                 }
                 gl.End();
